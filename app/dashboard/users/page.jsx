@@ -3,8 +3,11 @@ import Search from '@/app/ui/dashboard/search/search'
 import styles from '@/app/ui/dashboard/users/users.module.css'
 import Image from 'next/image'
 import Link from 'next/link'
-const UsersPage = () => {
+import {fetchData} from '@/app/lib/data'
+const UsersPage = async() => {
 
+    const data = await fetchData()
+    console.log(data)
     return (
         <div className={styles.container}>
             <div className={styles.top}>
