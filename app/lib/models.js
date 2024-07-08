@@ -17,6 +17,10 @@ import mongoose from "mongoose";
         type:String,
         required:true,
     },
+    phone:{
+        type:String,
+        required:true,
+    },
     img:{
         type:String
     },
