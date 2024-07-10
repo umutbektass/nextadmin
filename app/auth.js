@@ -15,7 +15,7 @@ const login = async (credentials) => {
         );
         if(!isPasswordCorrect) throw new Error("Wrong credentials!");
 
-
+    return user;
     } catch (error) {
         console.log(error)
         throw new Error(error)
@@ -36,4 +36,20 @@ export const { signIn, signOut, auth } = NextAuth({
             }
         })
     ],
+    callbacks:{
+        async jwt({token,user}){
+            if(user){
+                token.username=user.username
+                token.img=user.img;
+            }
+            return token;
+        },
+        async session({session,token}){
+            if(token){
+                session.user.username=token.username
+                session.user.img=token.img;
+            }
+            return session;
+        }
+    }
 })

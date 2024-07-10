@@ -15,6 +15,6 @@ export const authConfig = {
                 return Response.redirect(new URL("/dashboard",request.nextUrl));
             }
             return true;
-        }
-    }
-}
+        },
+    },
+};

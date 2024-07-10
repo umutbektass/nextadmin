@@ -6,14 +6,15 @@ import { redirect } from "next/navigation";
 const { User, Product } = require("./models");
 const { connectToDB } = require("./utils");
 import bcrypt from "bcryptjs"
+import { signIn } from "../auth";
 export const addUser = async (formData) => {
     "use server"
     const { username, email, password, phone, address, isAdmin, isActive } = Object.fromEntries(formData);
 
     try {
         connectToDB()
-        const salt = bcrypt.genSalt(10);
-        const hashedPassword = bcrypt.hash(password, salt)
+        const salt = await bcrypt.genSalt(10);
+        const hashedPassword = await bcrypt.hash(password, salt)
         const newUser = new User({
             username,
             email,
@@ -117,3 +118,11 @@ export const updateProduct = async(formData)=>{
 
 }
 
+export const authenticate = async(prevState,formData)=>{
+    const {username,password} = Object.fromEntries(formData);
+    try {
+       await signIn("credentials",{ username , password })
+    } catch (error) {
+       return "Wrong Credentials!"
+    }
+}
