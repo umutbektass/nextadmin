@@ -26,6 +26,7 @@ export const { signIn, signOut, auth } = NextAuth({
     ...authConfig,
     providers: [
         CredentialsProvider({
+            name:"credentials",
             async authorize(credentials) {
                 try {
                     const user = await login(credentials); 
