@@ -7,6 +7,7 @@ const { User, Product } = require("./models");
 const { connectToDB } = require("./utils");
 import bcrypt from "bcryptjs"
 import { signIn } from "../auth";
+import { isRedirectError } from "next/dist/client/components/redirect";
 export const addUser = async (formData) => {
     "use server"
     const { username, email, password, phone, address, isAdmin, isActive } = Object.fromEntries(formData);
@@ -45,15 +46,15 @@ export const deleteUser = async (formData) => {
 
 export const updateUser = async (formData) => {
     "use server"
-    const {id, username, email, password, phone, address, isAdmin, isActive } = Object.fromEntries(formData);
-   
+    const { id, username, email, password, phone, address, isAdmin, isActive } = Object.fromEntries(formData);
+
     try {
         connectToDB()
-       const updateFields={
-        username, email, password, phone, address, isAdmin, isActive
-       }
-       Object.keys(updateFields).forEach((key)=>(updateFields[key] === "" || undefined) && delete updateFields[key])
-      await User.findByIdAndUpdate(id,updateFields)
+        const updateFields = {
+            username, email, password, phone, address, isAdmin, isActive
+        }
+        Object.keys(updateFields).forEach((key) => (updateFields[key] === "" || undefined) && delete updateFields[key])
+        await User.findByIdAndUpdate(id, updateFields)
     } catch (error) {
         console.log("error", error)
     }
@@ -67,7 +68,7 @@ export const addProduct = async (formData) => {
 
     try {
         connectToDB()
-      
+
         const newProduct = new Product({
             title,
             desc,
@@ -101,28 +102,33 @@ export const deleteProduct = async (formData) => {
 
 
 
-export const updateProduct = async(formData)=>{
-  const {id,title,desc,price,stock,img,color,size} = Object.fromEntries(formData);
-  try {
-    connectToDB()
-    const updateFields = {
-        title,desc,price,stock,img,color,size
-    }
-    Object.keys(updateFields).forEach(key=>(updateFields[key]==="" || undefined) && delete updateFields[key])
-    await Product.findByIdAndUpdate(id,updateFields)
-  } catch (error) {
-    console.log(error)
-  }
-  revalidatePath("/dashboard/products")
-  redirect("/dashboard/products")
-
-}
-
-export const authenticate = async(prevState,formData)=>{
-    const {username,password} = Object.fromEntries(formData);
+export const updateProduct = async (formData) => {
+    const { id, title, desc, price, stock, img, color, size } = Object.fromEntries(formData);
     try {
-       await signIn("credentials",{ username , password })
+        connectToDB()
+        const updateFields = {
+            title, desc, price, stock, img, color, size
+        }
+        Object.keys(updateFields).forEach(key => (updateFields[key] === "" || undefined) && delete updateFields[key])
+        await Product.findByIdAndUpdate(id, updateFields)
     } catch (error) {
-       return "Wrong Credentials!"
+        console.log(error)
     }
+    revalidatePath("/dashboard/products")
+    redirect("/dashboard/products")
+
 }
+
+export const authenticate = async (prevState, formData) => {
+    const { username, password } = Object.fromEntries(formData);
+    try {
+        await signIn("credentials", { username, password });
+    } catch (error) {
+        if(isRedirectError(error))
+            {
+                throw error;
+            }
+            return "Wrong Credentials!";
+        
+    }
+};

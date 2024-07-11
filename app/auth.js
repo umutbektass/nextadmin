@@ -18,7 +18,7 @@ const login = async (credentials) => {
     return user;
     } catch (error) {
         console.log(error)
-        throw new Error(error)
+        throw new Error("Failed to login!")
     }
 }
 export const { signIn, signOut, auth } = NextAuth({
@@ -28,7 +28,7 @@ export const { signIn, signOut, auth } = NextAuth({
         CredentialsProvider({
             async authorize(credentials) {
                 try {
-                    const user = await login(credentials)
+                    const user = await login(credentials); 
                     return user;
                 } catch (error) {
                     return null; 
@@ -50,6 +50,6 @@ export const { signIn, signOut, auth } = NextAuth({
                 session.user.img=token.img;
             }
             return session;
-        }
-    }
-})
+        },
+    },
+});
